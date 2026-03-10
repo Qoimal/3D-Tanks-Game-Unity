@@ -53,7 +53,11 @@ public class TankMovement : MonoBehaviour
         // Store the player's input and make sure the audio for the engine is playing.
         m_MovementInputValue = Input.GetAxis(m_MovementAxisName);
         m_TurnInputValue = Input.GetAxis(m_TurnAxisName);
- 		EngineAudio();
+
+        //Joystick input
+        //m_MovementInputValue = Joystick.Vertical;
+        //m_TurnInputValue = Joystick.Horizontal;
+        EngineAudio();
     }
 
 
