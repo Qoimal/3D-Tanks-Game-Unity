@@ -16,7 +16,9 @@ public class TankMovement : MonoBehaviour
     private Rigidbody m_Rigidbody;         
     private float m_MovementInputValue;    
     private float m_TurnInputValue;        
-    private float m_OriginalPitch;         
+    private float m_OriginalPitch;
+
+    public Joystick joystick;
 
 
     private void Awake()
@@ -41,6 +43,11 @@ public class TankMovement : MonoBehaviour
 
     private void Start()
     {
+        // Mobile Joystick
+        if (joystick == null)
+            joystick = FindObjectOfType<FloatingJoystick>();
+
+        // Keyboard input
         m_MovementAxisName = "Vertical" + m_PlayerNumber;
         m_TurnAxisName = "Horizontal" + m_PlayerNumber;
 
@@ -54,9 +61,9 @@ public class TankMovement : MonoBehaviour
         m_MovementInputValue = Input.GetAxis(m_MovementAxisName);
         m_TurnInputValue = Input.GetAxis(m_TurnAxisName);
 
-        //Joystick input
-        //m_MovementInputValue = Joystick.Vertical;
-        //m_TurnInputValue = Joystick.Horizontal;
+        // Mobile Joystick input
+        m_MovementInputValue = joystick.Vertical;
+        m_TurnInputValue = joystick.Horizontal;
         EngineAudio();
     }
 
@@ -102,6 +109,9 @@ public class TankMovement : MonoBehaviour
         // Adjust the position of the tank based on the player's input.
         // Create a vector in the direction the tank is facing with a magnitude based on the input, speed and the time between frames.
         Vector3 movement = transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime;
+
+        // Move Tank with Joystick input
+        //Vector3 movement = transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime;
 
         // Apply this movement to the rigidbody's position.
         m_Rigidbody.MovePosition(m_Rigidbody.position + movement);
