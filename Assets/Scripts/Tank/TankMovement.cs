@@ -58,12 +58,30 @@ public class TankMovement : MonoBehaviour
     private void Update()
     {
         // Store the player's input and make sure the audio for the engine is playing.
-        m_MovementInputValue = Input.GetAxis(m_MovementAxisName);
-        m_TurnInputValue = Input.GetAxis(m_TurnAxisName);
+        //m_MovementInputValue = Input.GetAxis(m_MovementAxisName);
+        //m_TurnInputValue = Input.GetAxis(m_TurnAxisName);
 
-        // Mobile Joystick input
-        m_MovementInputValue = joystick.Vertical;
-        m_TurnInputValue = joystick.Horizontal;
+        //// Mobile Joystick input
+        //m_MovementInputValue = joystick.Vertical;
+        //m_TurnInputValue = joystick.Horizontal;
+        
+
+        float keyboardMove = Input.GetAxis(m_MovementAxisName);
+        float keyboardTurn = Input.GetAxis(m_TurnAxisName);
+
+        float joystickMove = 0f;
+        float joystickTurn = 0f;
+
+        if (joystick != null)
+        {
+            joystickMove = joystick.Vertical;
+            joystickTurn = joystick.Horizontal;
+        }
+
+        // chọn input lớn hơn
+        m_MovementInputValue = Mathf.Abs(joystickMove) > Mathf.Abs(keyboardMove) ? joystickMove : keyboardMove;
+        m_TurnInputValue = Mathf.Abs(joystickTurn) > Mathf.Abs(keyboardTurn) ? joystickTurn : keyboardTurn;
+
         EngineAudio();
     }
 

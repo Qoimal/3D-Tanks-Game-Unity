@@ -19,6 +19,12 @@ public class GameManager : MonoBehaviour
     private TankManager m_RoundWinner;          // Reference to the winner of the current round.  Used to make an announcement of who won.
     private TankManager m_GameWinner;           // Reference to the winner of the game.  Used to make an announcement of who won.
 
+    public Joystick m_Joystick1;
+    public Joystick m_Joystick2;
+
+    public FireButton fireButton1;
+    public FireButton fireButton2;
+
 
     private void Start()
     {
@@ -43,6 +49,26 @@ public class GameManager : MonoBehaviour
             m_Tanks[i].m_Instance =
                 Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
             m_Tanks[i].m_PlayerNumber = i + 1;
+
+            TankMovement movement = m_Tanks[i].m_Instance.GetComponent<TankMovement>();
+
+            if (i == 0)
+                movement.joystick = m_Joystick1;
+            else if (i == 1)
+                movement.joystick = m_Joystick2;
+
+            TankShooting shooting = m_Tanks[i].m_Instance.GetComponent<TankShooting>();
+            shooting.m_PlayerNumber = i + 1;
+
+            if (i == 0)
+            {
+                fireButton1.SetTank(shooting);
+            }
+            else if (i == 1)
+            {
+                fireButton2.SetTank(shooting);
+            }
+
             m_Tanks[i].Setup();
         }
     }

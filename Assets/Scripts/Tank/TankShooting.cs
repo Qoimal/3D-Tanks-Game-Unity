@@ -20,6 +20,9 @@ public class TankShooting : MonoBehaviour
     private float m_ChargeSpeed;                // How fast the launch force increases, based on the max charge time.
     private bool m_Fired;                       // Whether or not the shell has been launched with this button press.
 
+    private bool m_MobileButtonDown;
+    private bool m_MobileButtonHeld;
+    private bool m_MobileButtonUp;
 
     private void OnEnable()
     {
@@ -36,6 +39,8 @@ public class TankShooting : MonoBehaviour
 
         // The rate that the launch force charges up is the range of possible forces by the max charge time.
         m_ChargeSpeed = (m_MaxLaunchForce - m_MinLaunchForce) / m_MaxChargeTime;
+
+        Debug.Log("Fire Button = " + m_FireButton);
     }
 
 
@@ -44,6 +49,11 @@ public class TankShooting : MonoBehaviour
         // The slider should have a default value of the minimum launch force.
         m_AimSlider.value = m_MinLaunchForce;
 
+
+        bool buttonDown = Input.GetButtonDown(m_FireButton) || m_MobileButtonDown;
+        bool buttonHeld = Input.GetButton(m_FireButton) || m_MobileButtonHeld;
+        bool buttonUp = Input.GetButtonUp(m_FireButton) || m_MobileButtonUp;
+
         // If the max force has been exceeded and the shell hasn't yet been launched...
         if (m_CurrentLaunchForce >= m_MaxLaunchForce && !m_Fired)
         {
@@ -52,7 +62,7 @@ public class TankShooting : MonoBehaviour
             Fire();
         }
         // Otherwise, if the fire button has just started being pressed...
-        else if (Input.GetButtonDown(m_FireButton))
+        else if (buttonDown)
         {
             // ... reset the fired flag and reset the launch force.
             m_Fired = false;
@@ -63,7 +73,7 @@ public class TankShooting : MonoBehaviour
             m_ShootingAudio.Play();
         }
         // Otherwise, if the fire button is being held and the shell hasn't been launched yet...
-        else if (Input.GetButton(m_FireButton) && !m_Fired)
+        else if (buttonHeld && !m_Fired)
         {
             // Increment the launch force and update the slider.
             m_CurrentLaunchForce += m_ChargeSpeed * Time.deltaTime;
@@ -71,57 +81,28 @@ public class TankShooting : MonoBehaviour
             m_AimSlider.value = m_CurrentLaunchForce;
         }
         // Otherwise, if the fire button is released and the shell hasn't been launched yet...
-        else if (Input.GetButtonUp(m_FireButton) && !m_Fired)
+        else if (buttonUp && !m_Fired)
         {
             // ... launch the shell.
             Fire();
         }
+
+        m_MobileButtonDown = false;
+        m_MobileButtonUp = false;
+
     }
 
-    private bool m_IsCharging;
-    public void StartCharging()
+    public void MobileButtonDown()
     {
-        // The slider should have a default value of the minimum launch force.
-        m_AimSlider.value = m_MinLaunchForce;
-
-        // If the max force has been exceeded and the shell hasn't yet been launched...
-        if (m_CurrentLaunchForce >= m_MaxLaunchForce && !m_Fired)
-        {
-            // ... use the max force and launch the shell.
-            m_CurrentLaunchForce = m_MaxLaunchForce;
-            Fire();
-        }
-        // Otherwise, if the fire button has just started being pressed...
-        else if (Input.GetButtonDown(m_FireButton))
-        {
-            // ... reset the fired flag and reset the launch force.
-            m_Fired = false;
-            m_CurrentLaunchForce = m_MinLaunchForce;
-
-            // Change the clip to the charging clip and start it playing.
-            m_ShootingAudio.clip = m_ChargingClip;
-            m_ShootingAudio.Play();
-        }
-        // Otherwise, if the fire button is being held and the shell hasn't been launched yet...
-        else if (Input.GetButton(m_FireButton) && !m_Fired)
-        {
-            // Increment the launch force and update the slider.
-            m_CurrentLaunchForce += m_ChargeSpeed * Time.deltaTime;
-
-            m_AimSlider.value = m_CurrentLaunchForce;
-        }
-        // Otherwise, if the fire button is released and the shell hasn't been launched yet...
-        else if (Input.GetButtonUp(m_FireButton) && !m_Fired)
-        {
-            // ... launch the shell.
-            Fire();
-        }
+        m_MobileButtonDown = true;
+        m_MobileButtonHeld = true;
+        Debug.Log("Button pressed by " + gameObject.name);
     }
 
-    public void ReleaseFire()
+    public void MobileButtonUp()
     {
-        //Fire();
-        m_IsCharging = false;
+        m_MobileButtonHeld = false;
+        m_MobileButtonUp = true;
     }
 
 
